@@ -2,6 +2,7 @@ import sys
 import pygame
 from settings import Settings
 from snake import Snake, SnakeHead
+from pygame import time
 
 class SnakeGame:
     def __init__(self):
@@ -13,7 +14,7 @@ class SnakeGame:
 
         pygame.display.set_caption("Snake Game")
 
-        self.snake = pygame.sprite.Group()
+        self.snake = []
 
         self._generate_game_area()
         self._set_screen()
@@ -22,9 +23,11 @@ class SnakeGame:
 
     def run_game(self):
         while True:
+            self._check_directions()
             self._check_events()
-            
+            self._update_segment()
             self._update_screen()
+            time.wait(300)
 
     def _check_events(self):
         for event in pygame.event.get():
@@ -35,32 +38,56 @@ class SnakeGame:
 
     def _check_keydown_events(self, event):
         if event.key == pygame.K_RIGHT:
-            self.head.direction = 'right'
+            self.snake[0].direction = 'right'
         elif event.key == pygame.K_LEFT:
-            self.head.direction = 'left'
+            self.snake[0].direction = 'left'
         elif event.key == pygame.K_UP:
-            self.head.direction = 'up'
+            self.snake[0].direction = 'up'
         elif event.key == pygame.K_DOWN:
-            self.head.direction = 'down'
+            self.snake[0].direction = 'down'
         elif event.key == pygame.K_q:
             sys.exit()
-        elif event.key == pygame.K_SPACE:
-            self.head.update()
-        self._set_screen()
 
-    def _generate_snake(self):
-        self.head = SnakeHead(self,self.game_area[6][6])
+    def _update_segment(self):
+        for segment in self.snake:
+                segment.update()
+        
+
+    def _check_directions(self):
+        for segment in reversed(self.snake):
+            if type(segment) !=SnakeHead:
+                segment.direction = segment.next_segment.direction
+
 
     def _update_screen(self):
-        
-        self.head.draw_segment()
+        self._set_screen()
+        for segment in self.snake:
+            segment.draw_segment()
         pygame.display.flip()
 
 
     def _generate_game_area(self):
-        color = True
         self.game_area = [[pygame.Rect(x,y,self.settings.cellx_size,self.settings.celly_size) for x in range(0,801)[::self.settings.cellx_size]] 
                                                                                                 for y in range(0,801)[::self.settings.celly_size]]
+
+    def _generate_segment(self):
+        x,y = self.snake[-1].segment.center
+
+        match self.snake[-1].direction:
+            case 'up': y += self.settings.celly_size
+            case 'down': y -= self.settings.celly_size
+            case 'left': x += self.settings.cellx_size
+            case 'right': x -= self.settings.cellx_size
+        x//=50
+        y//=50
+        return Snake(self, self.game_area[y][x], self.snake[-1].direction, self.snake[-1])
+
+    def _generate_snake(self):
+        head = SnakeHead(self,self.game_area[6][6])
+        self.snake.append(head)
+        for i in range(5):
+            self.snake.append(self._generate_segment())
+
 
     def _set_screen(self):
         self.screen.fill(self.settings.bg_color)
