@@ -35,15 +35,17 @@ class SnakeGame:
 
     def _check_keydown_events(self, event):
         if event.key == pygame.K_RIGHT:
-            self.head.update('right')
+            self.head.direction = 'right'
         elif event.key == pygame.K_LEFT:
-            self.head.update('left')
+            self.head.direction = 'left'
         elif event.key == pygame.K_UP:
-            self.head.update('up')
+            self.head.direction = 'up'
         elif event.key == pygame.K_DOWN:
-            self.head.update('down')
+            self.head.direction = 'down'
         elif event.key == pygame.K_q:
             sys.exit()
+        elif event.key == pygame.K_SPACE:
+            self.head.update()
         self._set_screen()
 
     def _generate_snake(self):

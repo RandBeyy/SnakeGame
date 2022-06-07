@@ -10,15 +10,15 @@ class Snake(Sprite):
         self.color = self.settings.segment_color
         self.x_size = self.settings.cellx_size - 5
         self.y_size = self.settings.celly_size - 5
-        self.directions = 'up'
+        self.direction = 'up'
 
         self.segment = pygame.Rect(0,0, self.x_size, self.y_size)
         self.segment.center = cell.center
 
     
 
-    def update(self, direction):
-        match direction:
+    def update(self):
+        match self.direction:
             case 'up': self.segment.y -= 50
             case 'down': self.segment.y += 50
             case 'left': self.segment.x -= 50
