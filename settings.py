@@ -15,3 +15,4 @@ class Settings:
 
         #Snake settings
         self.snake_segment_size = (45, 45)
+        self.segment_color = (0,0,0)

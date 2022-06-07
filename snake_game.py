@@ -1,6 +1,7 @@
 import sys
 import pygame
 from settings import Settings
+from snake import Snake, SnakeHead
 
 class SnakeGame:
     def __init__(self):
@@ -10,21 +11,47 @@ class SnakeGame:
 
         self.screen = pygame.display.set_mode(self.settings.screen_size)
 
+        pygame.display.set_caption("Snake Game")
 
-    def run_game(self):
+        self.snake = pygame.sprite.Group()
+
         self._generate_game_area()
         self._set_screen()
+        self._generate_snake()
+
+
+    def run_game(self):
         while True:
-            self._update_screen()
             self._check_events()
+            
+            self._update_screen()
 
     def _check_events(self):
         for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit()
+                elif event.type == pygame.KEYDOWN:
+                    self._check_keydown_events(event)
 
+    def _check_keydown_events(self, event):
+        if event.key == pygame.K_RIGHT:
+            self.head.update('right')
+        elif event.key == pygame.K_LEFT:
+            self.head.update('left')
+        elif event.key == pygame.K_UP:
+            self.head.update('up')
+        elif event.key == pygame.K_DOWN:
+            self.head.update('down')
+        elif event.key == pygame.K_q:
+            sys.exit()
+        self._set_screen()
+
+    def _generate_snake(self):
+        self.head = SnakeHead(self,self.game_area[6][6])
 
     def _update_screen(self):
+        
+        self.head.draw_segment()
         pygame.display.flip()
 
 
