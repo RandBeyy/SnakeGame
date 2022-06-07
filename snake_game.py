@@ -30,7 +30,8 @@ class SnakeGame:
 
     def _generate_game_area(self):
         color = True
-        self.game_area = [[pygame.Rect(x,y,50,50) for x in range(0,801)[::50]] for y in range(0,801)[::50]]
+        self.game_area = [[pygame.Rect(x,y,self.settings.cellx_size,self.settings.celly_size) for x in range(0,801)[::self.settings.cellx_size]] 
+                                                                                                for y in range(0,801)[::self.settings.celly_size]]
 
     def _set_screen(self):
         self.screen.fill(self.settings.bg_color)
