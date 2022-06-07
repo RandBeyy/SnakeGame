@@ -26,6 +26,8 @@ class SnakeGame:
             self._check_directions()
             self._check_events()
             self._update_segment()
+            if self._check_game_over():
+                sys.exit()
             self._update_screen()
             time.wait(300)
 
@@ -37,18 +39,19 @@ class SnakeGame:
                     self._check_keydown_events(event)
 
     def _check_keydown_events(self, event):
-        if event.key == pygame.K_RIGHT:
+        if event.key == pygame.K_RIGHT and self.snake[0].direction != 'left':
             self.snake[0].direction = 'right'
-        elif event.key == pygame.K_LEFT:
+        elif event.key == pygame.K_LEFT and self.snake[0].direction != 'right':
             self.snake[0].direction = 'left'
-        elif event.key == pygame.K_UP:
+        elif event.key == pygame.K_UP and self.snake[0].direction != 'down':
             self.snake[0].direction = 'up'
-        elif event.key == pygame.K_DOWN:
+        elif event.key == pygame.K_DOWN and self.snake[0].direction != 'up':
             self.snake[0].direction = 'down'
         elif event.key == pygame.K_q:
             sys.exit()
 
     def _update_segment(self):
+        
         for segment in self.snake:
                 segment.update()
         
@@ -58,6 +61,10 @@ class SnakeGame:
             if type(segment) !=SnakeHead:
                 segment.direction = segment.next_segment.direction
 
+    def _check_game_over(self):
+        if self.screen.get_at(self.snake[0].segment.center)[0] == 0: return True
+        if self.snake[0].segment.x < 0 or self.snake[0].segment.x > 800: return True
+        if self.snake[0].segment.y < 0 or self.snake[0].segment.y > 800: return True
 
     def _update_screen(self):
         self._set_screen()
