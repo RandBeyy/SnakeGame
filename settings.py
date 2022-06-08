@@ -22,3 +22,7 @@ class Settings:
         #Fruit settings
         self.fruit_size = (45, 45)
         self.fruit_color = (255,0,0)
+        self.score_points = 5
+
+        #Text settings
+        self.text_color = (0,0,0)

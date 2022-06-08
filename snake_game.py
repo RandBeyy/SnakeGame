@@ -12,6 +12,12 @@ class SnakeGame:
         self.game_area = []         #List for game area
         self.fruit = pygame.Rect((0,0), self.settings.fruit_size)
         self.screen = pygame.display.set_mode(self.settings.screen_size)
+        self.score = 0
+        
+        self.font = pygame.font.Font('freesansbold.ttf', 32)
+        self.score_text = self.font.render(f'Your score - {self.score}', True, (0,0,0))
+        self.rect_score_text = self.score_text.get_rect()
+        self.rect_score_text.x,self.rect_score_text.y = (0,0)
 
         pygame.display.set_caption("Snake Game")
 
@@ -23,8 +29,13 @@ class SnakeGame:
         self._generate_fruit()
         self._generate_snake()
 
+    #def start_screen(self):
+        #self.screen.fill(self.settings.bg_color)
+        #text1 = self.font.render('Welcome to', True, (0,0,0))
+
 
     def run_game(self):
+        
         while True:
             self._check_directions()
             self._check_events()
@@ -81,14 +92,17 @@ class SnakeGame:
         if self.snake[0].segment.center == self.fruit.center:
             self.snake.append(self._generate_segment())
             self._generate_fruit()
+            self.score +=5
+            self.score_text = self.font.render(f'Your score - {self.score}', True, (0,0,0))
 
 
     def _update_screen(self):
         #Update snake and fruit postition
         self._set_screen()
         for segment in self.snake:
-            segment.draw_segment()
-        pygame.draw.rect(self.screen,self.settings.fruit_color,self.fruit)
+            segment.draw_segment()                                          #update snake
+        pygame.draw.rect(self.screen,self.settings.fruit_color,self.fruit)  #update fruit
+        self.screen.blit(self.score_text, self.rect_score_text)
         pygame.display.flip()
 
     def _generate_game_area(self):
