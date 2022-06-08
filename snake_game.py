@@ -25,8 +25,9 @@ class SnakeGame:
         while True:
             self._check_directions()
             self._check_events()
+            last_segm_coordinate = self.snake[-1].segment.center
             self._update_segment()
-            if self._check_game_over():
+            if self._check_game_over(last_segm_coordinate):
                 sys.exit()
             self._update_screen()
             time.wait(300)
@@ -61,8 +62,8 @@ class SnakeGame:
             if type(segment) !=SnakeHead:
                 segment.direction = segment.next_segment.direction
 
-    def _check_game_over(self):
-        if self.screen.get_at(self.snake[0].segment.center)[0] == 0: return True
+    def _check_game_over(self, last_segm_cord):
+        if self.screen.get_at(self.snake[0].segment.center)[0] == 0 and self.snake[0].segment.center != last_segm_cord: return True
         if self.snake[0].segment.x < 0 or self.snake[0].segment.x > 800: return True
         if self.snake[0].segment.y < 0 or self.snake[0].segment.y > 800: return True
 
