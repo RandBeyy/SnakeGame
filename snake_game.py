@@ -34,7 +34,7 @@ class SnakeGame:
                 sys.exit()
             self._check_for_fruit()
             self._update_screen()
-            time.wait(300)
+            time.wait(self.settings.snake_speed)
 
     def _check_events(self):
         for event in pygame.event.get():

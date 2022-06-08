@@ -17,6 +17,7 @@ class Settings:
         self.snake_segment_size = (45, 45)
         self.segment_color = (0,0,0)
         self.amount_of_segment_at_start = 2
+        self.snake_speed = 200          #In miliseconds
 
         #Fruit settings
         self.fruit_size = (45, 45)
