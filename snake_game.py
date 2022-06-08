@@ -10,39 +10,69 @@ class SnakeGame:
         pygame.init()
         self.settings = Settings()
         self.game_area = []         #List for game area
+        self._generate_game_area()
+        
+
         self.fruit = pygame.Rect((0,0), self.settings.fruit_size)
         self.screen = pygame.display.set_mode(self.settings.screen_size)
         self.score = 0
-        
+
+        self.screen.fill(self.settings.bg_color)
+
         self.font = pygame.font.Font('freesansbold.ttf', 32)
         self.score_text = self.font.render(f'Your score - {self.score}', True, (0,0,0))
         self.rect_score_text = self.score_text.get_rect()
         self.rect_score_text.x,self.rect_score_text.y = (0,0)
-
+        
         pygame.display.set_caption("Snake Game")
 
         self.snake = []
+        
+        
 
+    def start_screen(self):
+        #Set start screen
+        self.screen.fill(self.settings.bg_color)
+        
+        text1 = self.font.render('Welcome to Snake Game!', True, (0,0,0))
+        rect_text1 = text1.get_rect()
+        rect_text1.x, rect_text1.y = (200,200)
+        text2 = self.font.render("To start press 'space' or 'Q' to quit", True, (0,0,0))
+        rect_text2 = text2.get_rect()
+        rect_text2.center = rect_text1.center
+        rect_text2.y += 100
+        
+        self.screen.blit(text1, rect_text1)
+        self.screen.blit(text2, rect_text2)
+        pygame.display.flip()
+        #Start game or quit by pressing keys
+        while True:
+            for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        sys.exit()
+                    elif event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_SPACE:
+                            self.run_game()
+                        elif event.key == pygame.K_q:
+                            sys.exit
+
+    def run_game(self):
         #Generate game area, snake and fruit
-        self._generate_game_area()
+        self.score = 0
+        self.snake = []
+        self.score_text = self.font.render(f'Your score - {self.score}', True, (0,0,0))
+
         self._set_screen()
         self._generate_fruit()
         self._generate_snake()
 
-    #def start_screen(self):
-        #self.screen.fill(self.settings.bg_color)
-        #text1 = self.font.render('Welcome to', True, (0,0,0))
-
-
-    def run_game(self):
-        
         while True:
             self._check_directions()
             self._check_events()
             last_segm_coordinate = self.snake[-1].segment.center
             self._update_segment()
             if self._check_game_over(last_segm_coordinate):
-                sys.exit()
+                self._game_over_screen()
             self._check_for_fruit()
             self._update_screen()
             time.wait(self.settings.snake_speed)
@@ -102,7 +132,7 @@ class SnakeGame:
         for segment in self.snake:
             segment.draw_segment()                                          #update snake
         pygame.draw.rect(self.screen,self.settings.fruit_color,self.fruit)  #update fruit
-        self.screen.blit(self.score_text, self.rect_score_text)
+        self.screen.blit(self.score_text, self.rect_score_text)             #update score text
         pygame.display.flip()
 
     def _generate_game_area(self):
@@ -155,10 +185,37 @@ class SnakeGame:
                     return 1
 
 
+    def _game_over_screen(self):
+        #Set start screen
+        self.screen.fill((0,0,0))
+        
+        text1 = self.font.render(f'Your score is {self.score}', True, (255,0,0))
+        rect_text1 = text1.get_rect()
+        rect_text1.x, rect_text1.y = (200,200)
+        text2 = self.font.render("To restart press 'R' or 'Q' to quit", True, (255,0,0))
+        rect_text2 = text2.get_rect()
+        rect_text2.center = rect_text1.center
+        rect_text2.y += 100
+        
+        self.screen.blit(text1, rect_text1)
+        self.screen.blit(text2, rect_text2)
+        pygame.display.flip()
+        #Start game or quit by pressing keys
+        while True:
+            for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        sys.exit()
+                    elif event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_r:
+                            self.run_game()
+                        elif event.key == pygame.K_q:
+                            sys.exit
+
     def _set_screen(self):
         #Generate game area according to list of cells
         self.screen.fill(self.settings.bg_color)
         color = True
+        
         for row in self.game_area:
             for cell in row:
                 if (color):
@@ -171,4 +228,4 @@ class SnakeGame:
 
 if __name__ == '__main__':
     sg = SnakeGame()
-    sg.run_game()
+    sg.start_screen()
