@@ -54,7 +54,7 @@ class SnakeGame:
                         if event.key == pygame.K_SPACE:
                             self.run_game()
                         elif event.key == pygame.K_q:
-                            sys.exit
+                            sys.exit()
 
     def run_game(self):
         #Generate game area, snake and fruit
@@ -125,7 +125,7 @@ class SnakeGame:
             return True
 
     def _check_for_fruit(self):
-        if self.snake[0].segment.center == self.fruit.center:
+        if self.screen.get_at(self.snake[0].segment.center) == self.settings.red:
             self.snake.append(self._generate_segment())
             self._generate_fruit()
             self.score +=5
@@ -215,7 +215,7 @@ class SnakeGame:
                         if event.key == pygame.K_r:
                             self.run_game()
                         elif event.key == pygame.K_q:
-                            sys.exit
+                            sys.exit()
 
     def _set_screen(self):
         #Generate game area according to list of cells
