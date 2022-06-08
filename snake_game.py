@@ -19,7 +19,7 @@ class SnakeGame:
 
         self.screen.fill(self.settings.bg_color)
 
-        self.font = pygame.font.Font('freesansbold.ttf', 32)
+        self.font = pygame.font.Font('freesansbold.ttf', 25)
         self.score_text = self.font.render(f'Your score - {self.score}', True, (0,0,0))
         self.rect_score_text = self.score_text.get_rect()
         self.rect_score_text.x,self.rect_score_text.y = (0,0)
