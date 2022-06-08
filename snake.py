@@ -2,7 +2,8 @@ import pygame
 from pygame.sprite import Sprite
 
 class Snake(Sprite):
-
+    #Class represent snake segment 
+    
     def __init__(self, s_game, cell, direction = 'up', next_segment = None):
         super().__init__()
         self.screen = s_game.screen
@@ -30,12 +31,7 @@ class Snake(Sprite):
 
 
 class SnakeHead(Snake):
+    #Subclass for snake head
 
     def __init__(self, s_game, cell):
-        super().__init__(s_game,cell)
-
-
-class SnakeBody(Snake):
-    
-    def __init__(self, s_game, cell, next_segment):
         super().__init__(s_game,cell)

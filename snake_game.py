@@ -8,7 +8,7 @@ class SnakeGame:
     def __init__(self):
         pygame.init()
         self.settings = Settings()
-        self.game_area = []
+        self.game_area = []         #list for game area
 
         self.screen = pygame.display.set_mode(self.settings.screen_size)
 
@@ -16,6 +16,7 @@ class SnakeGame:
 
         self.snake = []
 
+        #generate game area and snake
         self._generate_game_area()
         self._set_screen()
         self._generate_snake()
@@ -39,7 +40,9 @@ class SnakeGame:
                 elif event.type == pygame.KEYDOWN:
                     self._check_keydown_events(event)
 
+    
     def _check_keydown_events(self, event):
+        #On keydown events snake head will change direction
         if event.key == pygame.K_RIGHT and self.snake[0].direction != 'left':
             self.snake[0].direction = 'right'
         elif event.key == pygame.K_LEFT and self.snake[0].direction != 'right':
@@ -52,22 +55,25 @@ class SnakeGame:
             sys.exit()
 
     def _update_segment(self):
-        
+        #For every snake segment call method to update it's coordinate according to it's direction
         for segment in self.snake:
                 segment.update()
         
 
     def _check_directions(self):
+        #Every snake segment except head will change it's direction according to direction of next segment to it in reversed way
         for segment in reversed(self.snake):
             if type(segment) !=SnakeHead:
                 segment.direction = segment.next_segment.direction
 
     def _check_game_over(self, last_segm_cord):
+        #If Snake head will touch themself or border of game area - return True to stop the game
         if self.screen.get_at(self.snake[0].segment.center)[0] == 0 and self.snake[0].segment.center != last_segm_cord: return True
         if self.snake[0].segment.x < 0 or self.snake[0].segment.x > 800: return True
         if self.snake[0].segment.y < 0 or self.snake[0].segment.y > 800: return True
 
     def _update_screen(self):
+        #Update snake and fruit postition
         self._set_screen()
         for segment in self.snake:
             segment.draw_segment()
@@ -75,10 +81,12 @@ class SnakeGame:
 
 
     def _generate_game_area(self):
+        #Generate 2D list of cells that represent the game area
         self.game_area = [[pygame.Rect(x,y,self.settings.cellx_size,self.settings.celly_size) for x in range(0,801)[::self.settings.cellx_size]] 
                                                                                                 for y in range(0,801)[::self.settings.celly_size]]
 
     def _generate_segment(self):
+        #Generate Snake segment after last segment and return it
         x,y = self.snake[-1].segment.center
 
         match self.snake[-1].direction:
@@ -91,13 +99,15 @@ class SnakeGame:
         return Snake(self, self.game_area[y][x], self.snake[-1].direction, self.snake[-1])
 
     def _generate_snake(self):
+        #Generate snake at start
         head = SnakeHead(self,self.game_area[6][6])
         self.snake.append(head)
-        for i in range(5):
+        for i in range(self.settings.amount_of_segment_at_start - 1):
             self.snake.append(self._generate_segment())
 
 
     def _set_screen(self):
+        #Generate game area according to list of cells
         self.screen.fill(self.settings.bg_color)
         color = True
         for row in self.game_area:
@@ -108,8 +118,6 @@ class SnakeGame:
                 else:
                     color = True
                     pygame.draw.rect(self.screen, self.settings.white_cell_color, cell)
-                
-        pygame.display.flip()
 
 
 
