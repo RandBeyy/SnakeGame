@@ -16,4 +16,8 @@ class Settings:
         #Snake settings
         self.snake_segment_size = (45, 45)
         self.segment_color = (0,0,0)
-        self.amount_of_segment_at_start = 6
+        self.amount_of_segment_at_start = 2
+
+        #Fruit settings
+        self.fruit_size = (45, 45)
+        self.fruit_color = (255,0,0)

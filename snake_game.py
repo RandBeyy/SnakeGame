@@ -3,22 +3,24 @@ import pygame
 from settings import Settings
 from snake import Snake, SnakeHead
 from pygame import time
+from random import randint, choice
 
 class SnakeGame:
     def __init__(self):
         pygame.init()
         self.settings = Settings()
-        self.game_area = []         #list for game area
-
+        self.game_area = []         #List for game area
+        self.fruit = pygame.Rect((0,0), self.settings.fruit_size)
         self.screen = pygame.display.set_mode(self.settings.screen_size)
 
         pygame.display.set_caption("Snake Game")
 
         self.snake = []
 
-        #generate game area and snake
+        #Generate game area, snake and fruit
         self._generate_game_area()
         self._set_screen()
+        self._generate_fruit()
         self._generate_snake()
 
 
@@ -30,6 +32,7 @@ class SnakeGame:
             self._update_segment()
             if self._check_game_over(last_segm_coordinate):
                 sys.exit()
+            self._check_for_fruit()
             self._update_screen()
             time.wait(300)
 
@@ -59,7 +62,6 @@ class SnakeGame:
         for segment in self.snake:
                 segment.update()
         
-
     def _check_directions(self):
         #Every snake segment except head will change it's direction according to direction of next segment to it in reversed way
         for segment in reversed(self.snake):
@@ -68,17 +70,26 @@ class SnakeGame:
 
     def _check_game_over(self, last_segm_cord):
         #If Snake head will touch themself or border of game area - return True to stop the game
-        if self.screen.get_at(self.snake[0].segment.center)[0] == 0 and self.snake[0].segment.center != last_segm_cord: return True
-        if self.snake[0].segment.x < 0 or self.snake[0].segment.x > 800: return True
-        if self.snake[0].segment.y < 0 or self.snake[0].segment.y > 800: return True
+        try:
+            if self.screen.get_at(self.snake[0].segment.center)[0] == 0 and self.snake[0].segment.center != last_segm_cord: return True
+            if self.snake[0].segment.x < 0 or self.snake[0].segment.x > 800: return True
+            if self.snake[0].segment.y < 0 or self.snake[0].segment.y > 800: return True
+        except:
+            return True
+
+    def _check_for_fruit(self):
+        if self.snake[0].segment.center == self.fruit.center:
+            self.snake.append(self._generate_segment())
+            self._generate_fruit()
+
 
     def _update_screen(self):
         #Update snake and fruit postition
         self._set_screen()
         for segment in self.snake:
             segment.draw_segment()
+        pygame.draw.rect(self.screen,self.settings.fruit_color,self.fruit)
         pygame.display.flip()
-
 
     def _generate_game_area(self):
         #Generate 2D list of cells that represent the game area
@@ -105,6 +116,30 @@ class SnakeGame:
         for i in range(self.settings.amount_of_segment_at_start - 1):
             self.snake.append(self._generate_segment())
 
+    def _generate_fruit(self):
+        #Generate rectangle, that represent fruit
+        #First try to find free cell, using random function
+        n = 5
+        for t in range (n):
+            i = randint(0,15)
+            j = randint(0,15)
+            color = self.screen.get_at(self.game_area[i][j].center)
+
+            if color != (0,0,0,255):
+                self.fruit.center = self.game_area[i][j].center
+                return 1
+        
+        #If snake is too big, and it can't find free cell then iterate through the whole list
+        slices = (slice(0,15,1), slice(-1,-16,-1))
+
+        for i in range(0,15)[choice(slices)]:
+            for j in range(0,15)[choice(slices)]:
+                color = self.screen.get_at(self.game_area[i][j].center)
+
+                if color != (0,0,0,255):
+                    self.fruit.center = self.game_area[i][j].center
+                    return 1
+
 
     def _set_screen(self):
         #Generate game area according to list of cells
@@ -118,12 +153,6 @@ class SnakeGame:
                 else:
                     color = True
                     pygame.draw.rect(self.screen, self.settings.white_cell_color, cell)
-
-
-
-
-
-
 
 
 if __name__ == '__main__':
