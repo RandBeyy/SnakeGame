@@ -11,7 +11,7 @@ class SnakeGame:
         self.settings = Settings()
         self.game_area = []         #List for game area
         self._generate_game_area()
-        
+        self.access_to_change_direction = True
 
         self.fruit = pygame.Rect((0,0), self.settings.fruit_size)
         self.screen = pygame.display.set_mode(self.settings.screen_size)
@@ -20,7 +20,7 @@ class SnakeGame:
         self.screen.fill(self.settings.bg_color)
 
         self.font = pygame.font.Font('freesansbold.ttf', 25)
-        self.score_text = self.font.render(f'Your score - {self.score}', True, (0,0,0))
+        self.score_text = self.font.render(f'Your score - {self.score}', True, self.settings.black)
         self.rect_score_text = self.score_text.get_rect()
         self.rect_score_text.x,self.rect_score_text.y = (0,0)
         
@@ -34,10 +34,10 @@ class SnakeGame:
         #Set start screen
         self.screen.fill(self.settings.bg_color)
         
-        text1 = self.font.render('Welcome to Snake Game!', True, (0,0,0))
+        text1 = self.font.render('Welcome to Snake Game!', True, self.settings.black)
         rect_text1 = text1.get_rect()
-        rect_text1.x, rect_text1.y = (200,200)
-        text2 = self.font.render("To start press 'space' or 'Q' to quit", True, (0,0,0))
+        rect_text1.x, rect_text1.y = (250,300)
+        text2 = self.font.render("To start press 'space' or 'Q' to quit", True, self.settings.black)
         rect_text2 = text2.get_rect()
         rect_text2.center = rect_text1.center
         rect_text2.y += 100
@@ -60,13 +60,14 @@ class SnakeGame:
         #Generate game area, snake and fruit
         self.score = 0
         self.snake = []
-        self.score_text = self.font.render(f'Your score - {self.score}', True, (0,0,0))
+        self.score_text = self.font.render(f'Your score - {self.score}', True, self.settings.black)
 
         self._set_screen()
         self._generate_fruit()
         self._generate_snake()
 
         while True:
+            self.access_to_change_direction = True
             self._check_directions()
             self._check_events()
             last_segm_coordinate = self.snake[-1].segment.center
@@ -87,16 +88,21 @@ class SnakeGame:
     
     def _check_keydown_events(self, event):
         #On keydown events snake head will change direction
-        if event.key == pygame.K_RIGHT and self.snake[0].direction != 'left':
-            self.snake[0].direction = 'right'
-        elif event.key == pygame.K_LEFT and self.snake[0].direction != 'right':
-            self.snake[0].direction = 'left'
-        elif event.key == pygame.K_UP and self.snake[0].direction != 'down':
-            self.snake[0].direction = 'up'
-        elif event.key == pygame.K_DOWN and self.snake[0].direction != 'up':
-            self.snake[0].direction = 'down'
-        elif event.key == pygame.K_q:
-            sys.exit()
+        if (self.access_to_change_direction):
+            if event.key == pygame.K_RIGHT and self.snake[0].direction != 'left':
+                self.snake[0].direction = 'right'
+                self.access_to_change_direction = False
+            elif event.key == pygame.K_LEFT and self.snake[0].direction != 'right':
+                self.snake[0].direction = 'left'
+                self.access_to_change_direction = False
+            elif event.key == pygame.K_UP and self.snake[0].direction != 'down':
+                self.snake[0].direction = 'up'
+                self.access_to_change_direction = False
+            elif event.key == pygame.K_DOWN and self.snake[0].direction != 'up':
+                self.snake[0].direction = 'down'
+                self.access_to_change_direction = False
+            elif event.key == pygame.K_q:
+                sys.exit()
 
     def _update_segment(self):
         #For every snake segment call method to update it's coordinate according to it's direction
@@ -189,10 +195,10 @@ class SnakeGame:
         #Set start screen
         self.screen.fill((0,0,0))
         
-        text1 = self.font.render(f'Your score is {self.score}', True, (255,0,0))
+        text1 = self.font.render(f'Your score is {self.score}', True, self.settings.red)
         rect_text1 = text1.get_rect()
-        rect_text1.x, rect_text1.y = (200,200)
-        text2 = self.font.render("To restart press 'R' or 'Q' to quit", True, (255,0,0))
+        rect_text1.x, rect_text1.y = (300,300)
+        text2 = self.font.render("To restart press 'R' or 'Q' to quit", True, self.settings.red)
         rect_text2 = text2.get_rect()
         rect_text2.center = rect_text1.center
         rect_text2.y += 100

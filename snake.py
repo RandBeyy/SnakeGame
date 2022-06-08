@@ -9,8 +9,8 @@ class Snake(Sprite):
         self.screen = s_game.screen
         self.settings = s_game.settings
         self.color = self.settings.segment_color
-        self.x_size = self.settings.cellx_size - 5
-        self.y_size = self.settings.celly_size - 5
+        self.x_size, self.y_size = self.settings.snake_segment_size
+        
         self.direction = direction
 
         self.segment = pygame.Rect(0,0, self.x_size, self.y_size)
